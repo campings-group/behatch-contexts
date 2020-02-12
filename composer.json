@@ -1,5 +1,5 @@
 {
-    "name": "behatch/contexts",
+    "name": "campings-group/behatch-contexts",
     "description": "Behatch contexts",
     "keywords": ["BDD", "Behat", "Symfony2", "Context"],
     "type": "library",
