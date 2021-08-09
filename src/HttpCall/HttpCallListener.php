@@ -54,10 +54,8 @@ class HttpCallListener implements EventSubscriberInterface
             $this->httpCallResultPool->store(
                 new HttpCallResult($this->mink->getSession()->getPage()->getContent())
             );
-        } catch (\LogicException $e) {
-            // Mink has no response
-        } catch (\Behat\Mink\Exception\DriverException $e) {
-            // No Mink
+        } catch (\Throwable $e) {
+            // Any fail is ignored
         }
     }
 }
