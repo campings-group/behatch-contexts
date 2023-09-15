@@ -234,6 +234,16 @@ class RestContext extends BaseContext
     }
 
     /**
+     * Add an authorization basic header in a request
+     *
+     * @Then I add basic authorization header for username :username and password :password
+     */
+    public function iAddAuthorizationBasicHeaderFor($username, $password)
+    {
+        $this->request->setHttpHeader('Authorization', 'Basic '.base64_encode("$username:$password"));
+    }
+
+    /**
      * @Then the response should be encoded in :encoding
      */
     public function theResponseShouldBeEncodedIn($encoding)
