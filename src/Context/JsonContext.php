@@ -391,7 +391,6 @@ class JsonContext extends BaseContext
         );
     }
     /**
-     *
      * Checks, that response JSON not matches with a swagger dump
      *
      * @Then the JSON should not be valid according to swagger :dumpPath dump schema :schemaName
@@ -403,7 +402,98 @@ class JsonContext extends BaseContext
         }, 'JSON Schema matches but it should not');
     }
 
+    /**
+     * @Then json response content list has :attribute attribute
+     */
+    public function jsonResponseContentListHasAttribute($attribute)
+    {
+        $content = $this->getJson()->getContent();
+        if (empty($content)) {
+            throw new \Exception('empty content !');
+        }
 
+        foreach ($content as $row) {
+            if (!array_key_exists($attribute, $row)) {
+                throw new \Exception(sprintf('field %s not found', $attribute));
+            }
+        }
+    }
+
+    /**
+     * Checks that all elements in the json must not have a value in a specific field.
+     *
+     * @Then All items in the JSON node :node must not have the field :field with value equal to :value
+     */
+    public function AllItemsInTheJsonNodeMustNotHaveTheFieldWithValueEqualTo($node, $field, $value)
+    {
+        $json = $this->getJson();
+
+        $nodeAsArray = $this->inspector->evaluate($json, $node);
+
+        foreach ($nodeAsArray as $element) {
+            $this->assertNotContains($value, $element->{$field});
+        }
+    }
+
+    /**
+     * Checks that all elements in the json must not have a value in a specific field.
+     *
+     * @Then All items in the JSON node :node must have the field :field with value equal to :value
+     */
+    public function AllItemsInTheJsonNodeMustHaveTheFieldWithValueEqualTo($node, $field, $value)
+    {
+        $json = $this->getJson();
+
+        $nodeAsArray = $this->inspector->evaluate($json, $node);
+
+        foreach ($nodeAsArray as $element) {
+            $this->assertSame($value, (string) $element->{$field});
+        }
+    }
+
+    /**
+     * @Then All items in the JSON node :node must have the field :field null
+     */
+    public function AllItemsInTheJsonNodeMustHaveTheFieldWithValueEqualToNull($node, $field)
+    {
+        $json = $this->getJson();
+
+        $nodeAsArray = $this->inspector->evaluate($json, $node);
+
+        foreach ($nodeAsArray as $element) {
+            $this->assertSame(null, $element->{$field});
+        }
+    }
+
+    /**
+     * @Then All items in the JSON node :node must not have the field :field null
+     */
+    public function AllItemsInTheJsonNodeMustNotHaveTheFieldWithValueEqualToNull($node, $field)
+    {
+        $json = $this->getJson();
+
+        $nodeAsArray = $this->inspector->evaluate($json, $node);
+
+        foreach ($nodeAsArray as $element) {
+            $this->assertFalse($element->{$field} === null);
+        }
+    }
+
+    /**
+     * @Then json response content has :attribute attribute equals to :value
+     */
+    public function jsonResponseContentHasAttributeEqualsTo(string $attribute, $value)
+    {
+        $content = $this->getArrayFromJson();
+
+        if (!array_key_exists($attribute, $content)) {
+            throw new \Exception(sprintf('field %s not found', $attribute));
+        }
+
+        if ((string) $content[$attribute] !== (string) $value) {
+            throw new \Exception(sprintf('field %s equals to ', $content[$attribute]));
+        }
+    }
 
     protected function getJson()
     {
