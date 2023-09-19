@@ -5,7 +5,8 @@ namespace Behatch\Context;
 use Behat\Gherkin\Node\PyStringNode;
 
 use Behat\Gherkin\Node\TableNode;
-use Behat\Mink\Exception\ExpectationException;
+use Behat\MinkJsonException\ExpectationException;
+use Behatch\Exception\JsonException;
 use Behatch\Json\Json;
 use Behatch\Json\JsonSchema;
 use Behatch\Json\JsonInspector;
@@ -58,7 +59,7 @@ class JsonContext extends BaseContext
         $actual = $this->inspector->evaluate($json, $node);
 
         if ($actual != $text) {
-            throw new \Exception(
+            throw new JsonException(
                 sprintf("The node value is '%s'", json_encode($actual))
             );
         }
@@ -88,7 +89,7 @@ class JsonContext extends BaseContext
         $actual = $this->inspector->evaluate($json, $node);
 
         if (preg_match($pattern, $actual) === 0) {
-            throw new \Exception(
+            throw new JsonException(
                 sprintf("The node value is '%s'", json_encode($actual))
             );
         }
@@ -106,7 +107,7 @@ class JsonContext extends BaseContext
         $actual = $this->inspector->evaluate($json, $node);
 
         if (null !== $actual) {
-            throw new \Exception(
+            throw new JsonException(
                 sprintf('The node value is `%s`', json_encode($actual))
             );
         }
@@ -136,7 +137,7 @@ class JsonContext extends BaseContext
         $actual = $this->inspector->evaluate($json, $node);
 
         if (true !== $actual) {
-            throw new \Exception(
+            throw new JsonException(
                 sprintf('The node value is `%s`', json_encode($actual))
             );
         }
@@ -154,7 +155,7 @@ class JsonContext extends BaseContext
         $actual = $this->inspector->evaluate($json, $node);
 
         if (false !== $actual) {
-            throw new \Exception(
+            throw new JsonException(
                 sprintf('The node value is `%s`', json_encode($actual))
             );
         }
@@ -172,7 +173,7 @@ class JsonContext extends BaseContext
         $actual = $this->inspector->evaluate($json, $node);
 
         if ($actual !== $text) {
-            throw new \Exception(
+            throw new JsonException(
                 sprintf('The node value is `%s`', json_encode($actual))
             );
         }
@@ -190,7 +191,7 @@ class JsonContext extends BaseContext
         $actual = $this->inspector->evaluate($json, $node);
 
         if ($actual !== (float) $number && $actual !== (int) $number) {
-            throw new \Exception(
+            throw new JsonException(
                 sprintf('The node value is `%s`', json_encode($actual))
             );
         }
@@ -274,7 +275,7 @@ class JsonContext extends BaseContext
         try {
             $node = $this->inspector->evaluate($json, $name);
         } catch (\Exception $e) {
-            throw new \Exception("The node '$name' does not exist.");
+            throw new JsonException("The node '$name' does not exist.");
         }
         return $node;
     }
@@ -350,7 +351,7 @@ class JsonContext extends BaseContext
         try {
             $expected = new Json($content);
         } catch (\Exception $e) {
-            throw new \Exception('The expected JSON is not a valid');
+            throw new JsonException('The expected JSON is not a valid');
         }
 
         $this->assertSame(
@@ -391,7 +392,6 @@ class JsonContext extends BaseContext
         );
     }
     /**
-     *
      * Checks, that response JSON not matches with a swagger dump
      *
      * @Then the JSON should not be valid according to swagger :dumpPath dump schema :schemaName
@@ -403,7 +403,98 @@ class JsonContext extends BaseContext
         }, 'JSON Schema matches but it should not');
     }
 
+    /**
+     * @Then json response content list has :attribute attribute
+     */
+    public function jsonResponseContentListHasAttribute($attribute)
+    {
+        $content = $this->getJson()->getContent();
+        if (empty($content)) {
+            throw new JsonException('empty content !');
+        }
 
+        foreach ($content as $row) {
+            if (!array_key_exists($attribute, $row)) {
+                throw new JsonException(sprintf('field %s not found', $attribute));
+            }
+        }
+    }
+
+    /**
+     * Checks that all elements in the json must not have a value in a specific field.
+     *
+     * @Then All items in the JSON node :node must not have the field :field with value equal to :value
+     */
+    public function AllItemsInTheJsonNodeMustNotHaveTheFieldWithValueEqualTo($node, $field, $value)
+    {
+        $json = $this->getJson();
+
+        $nodeAsArray = $this->inspector->evaluate($json, $node);
+
+        foreach ($nodeAsArray as $element) {
+            $this->assertNotContains($value, $element->{$field});
+        }
+    }
+
+    /**
+     * Checks that all elements in the json must not have a value in a specific field.
+     *
+     * @Then All items in the JSON node :node must have the field :field with value equal to :value
+     */
+    public function AllItemsInTheJsonNodeMustHaveTheFieldWithValueEqualTo($node, $field, $value)
+    {
+        $json = $this->getJson();
+
+        $nodeAsArray = $this->inspector->evaluate($json, $node);
+
+        foreach ($nodeAsArray as $element) {
+            $this->assertSame($value, (string) $element->{$field});
+        }
+    }
+
+    /**
+     * @Then All items in the JSON node :node must have the field :field null
+     */
+    public function AllItemsInTheJsonNodeMustHaveTheFieldWithValueEqualToNull($node, $field)
+    {
+        $json = $this->getJson();
+
+        $nodeAsArray = $this->inspector->evaluate($json, $node);
+
+        foreach ($nodeAsArray as $element) {
+            $this->assertSame(null, $element->{$field});
+        }
+    }
+
+    /**
+     * @Then All items in the JSON node :node must not have the field :field null
+     */
+    public function AllItemsInTheJsonNodeMustNotHaveTheFieldWithValueEqualToNull($node, $field)
+    {
+        $json = $this->getJson();
+
+        $nodeAsArray = $this->inspector->evaluate($json, $node);
+
+        foreach ($nodeAsArray as $element) {
+            $this->assertFalse($element->{$field} === null);
+        }
+    }
+
+    /**
+     * @Then json response content has :attribute attribute equals to :value
+     */
+    public function jsonResponseContentHasAttributeEqualsTo($attribute, $value)
+    {
+        $content = $this->getJson()->getContent();
+
+        if (!array_key_exists($attribute, $content)) {
+            throw new JsonException(sprintf('field %s not found', $attribute));
+        }
+
+        if ((string) $content[$attribute] !== (string) $value) {
+            throw new JsonException(sprintf('field %s equals to ', $content[$attribute]));
+        }
+    }
 
     protected function getJson()
     {
