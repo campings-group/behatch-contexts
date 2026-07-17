@@ -6,6 +6,8 @@ use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Exception\ExpectationException;
 use Behatch\HttpCall\Request;
+use Behat\Step\Given;
+use Behat\Step\Then;
 
 class RestContext extends BaseContext
 {
@@ -21,9 +23,8 @@ class RestContext extends BaseContext
 
     /**
      * Sends a HTTP request
-     *
-     * @Given I send a :method request to :url
      */
+    #[Given('I send a :method request to :url')]
     public function iSendARequestTo($method, $url, PyStringNode $body = null, $files = [])
     {
         return $this->request->send(
@@ -37,9 +38,8 @@ class RestContext extends BaseContext
 
     /**
      * Sends a HTTP request with a some parameters
-     *
-     * @Given I send a :method request to :url with parameters:
      */
+    #[Given('I send a :method request to :url with parameters:')]
     public function iSendARequestToWithParameters($method, $url, TableNode $data)
     {
         $files = [];
@@ -68,9 +68,8 @@ class RestContext extends BaseContext
 
     /**
      * Sends a HTTP request with a body
-     *
-     * @Given I send a :method request to :url with body:
      */
+    #[Given('I send a :method request to :url with body:')]
     public function iSendARequestToWithBody($method, $url, PyStringNode $body)
     {
         return $this->iSendARequestTo($method, $url, $body);
@@ -78,10 +77,9 @@ class RestContext extends BaseContext
 
     /**
      * Checks, whether the response content is equal to given text
-     *
-     * @Then the response should be equal to
-     * @Then the response should be equal to:
      */
+    #[Then('the response should be equal to')]
+    #[Then('the response should be equal to:')]
     public function theResponseShouldBeEqualTo(PyStringNode $expected)
     {
         $expected = str_replace('\\"', '"', $expected);
@@ -92,9 +90,8 @@ class RestContext extends BaseContext
 
     /**
      * Checks, whether the response content is null or empty string
-     *
-     * @Then the response should be empty
      */
+    #[Then('the response should be empty')]
     public function theResponseShouldBeEmpty()
     {
         $actual = $this->request->getContent();
@@ -104,9 +101,8 @@ class RestContext extends BaseContext
 
     /**
      * Checks, whether the header name is equal to given text
-     *
-     * @Then the header :name should be equal to :value
      */
+    #[Then('the header :name should be equal to :value')]
     public function theHeaderShouldBeEqualTo($name, $value)
     {
         $actual = $this->request->getHttpHeader($name);
@@ -117,9 +113,8 @@ class RestContext extends BaseContext
 
     /**
     * Checks, whether the header name is not equal to given text
-    *
-    * @Then the header :name should not be equal to :value
     */
+    #[Then('the header :name should not be equal to :value')]
     public function theHeaderShouldNotBeEqualTo($name, $value) {
         $actual = $this->getSession()->getResponseHeader($name);
         if (strtolower($value) == strtolower($actual)) {
@@ -141,9 +136,8 @@ class RestContext extends BaseContext
 
     /**
      * Checks, whether the header name contains the given text
-     *
-     * @Then the header :name should contain :value
      */
+    #[Then('the header :name should contain :value')]
     public function theHeaderShouldContain($name, $value)
     {
         $actual = $this->request->getHttpHeader($name);
@@ -154,9 +148,8 @@ class RestContext extends BaseContext
 
     /**
      * Checks, whether the header name doesn't contain the given text
-     *
-     * @Then the header :name should not contain :value
      */
+    #[Then('the header :name should not contain :value')]
     public function theHeaderShouldNotContain($name, $value)
     {
         $this->assertNotContains($value, $this->request->getHttpHeader($name),
@@ -166,9 +159,8 @@ class RestContext extends BaseContext
 
     /**
      * Checks, whether the header not exist
-     *
-     * @Then the header :name should not exist
      */
+    #[Then('the header :name should not exist')]
     public function theHeaderShouldNotExist($name)
     {
         $this->not(function () use($name) {
@@ -181,9 +173,7 @@ class RestContext extends BaseContext
         return $this->request->getHttpHeader($name);
     }
 
-    /**
-     * @Then the header :name should match :regex
-     */
+    #[Then('the header :name should match :regex')]
     public function theHeaderShouldMatch($name, $regex)
     {
         $actual = $this->request->getHttpHeader($name);
@@ -195,9 +185,7 @@ class RestContext extends BaseContext
         );
     }
 
-    /**
-     * @Then the header :name should not match :regex
-     */
+    #[Then('the header :name should not match :regex')]
     public function theHeaderShouldNotMatch($name, $regex)
     {
         $this->not(
@@ -210,9 +198,8 @@ class RestContext extends BaseContext
 
    /**
      * Checks, that the response header expire is in the future
-     *
-     * @Then the response should expire in the future
      */
+   #[Then('the response should expire in the future')]
     public function theResponseShouldExpireInTheFuture()
     {
         $date = new \DateTime($this->request->getHttpRawHeader('Date')[0]);
@@ -225,9 +212,8 @@ class RestContext extends BaseContext
 
     /**
      * Add an header element in a request
-     *
-     * @Then I add :name header equal to :value
      */
+    #[Then('I add :name header equal to :value')]
     public function iAddHeaderEqualTo($name, $value)
     {
         $this->request->setHttpHeader($name, $value);
@@ -235,17 +221,14 @@ class RestContext extends BaseContext
 
     /**
      * Add an authorization basic header in a request
-     *
-     * @Then I add basic authorization header for username :username and password :password
      */
+    #[Then('I add basic authorization header for username :username and password :password')]
     public function iAddAuthorizationBasicHeaderFor($username, $password)
     {
         $this->request->setHttpHeader('Authorization', 'Basic '.base64_encode("$username:$password"));
     }
 
-    /**
-     * @Then the response should be encoded in :encoding
-     */
+    #[Then('the response should be encoded in :encoding')]
     public function theResponseShouldBeEncodedIn($encoding)
     {
         $content = $this->request->getContent();
@@ -256,9 +239,7 @@ class RestContext extends BaseContext
         $this->theHeaderShouldContain('Content-Type', "charset=$encoding");
     }
 
-    /**
-     * @Then print last response headers
-     */
+    #[Then('print last response headers')]
     public function printLastResponseHeaders()
     {
         $text = '';
@@ -271,9 +252,7 @@ class RestContext extends BaseContext
     }
 
 
-    /**
-     * @Then print the corresponding curl command
-     */
+    #[Then('print the corresponding curl command')]
     public function printTheCorrespondingCurlCommand()
     {
         $method = $this->request->getMethod();

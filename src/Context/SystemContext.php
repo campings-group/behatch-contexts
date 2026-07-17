@@ -4,6 +4,9 @@ namespace Behatch\Context;
 
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
+use Behat\Step\Given;
+use Behat\Step\Then;
+use Behat\Hook\AfterScenario;
 
 class SystemContext implements Context
 {
@@ -25,9 +28,8 @@ class SystemContext implements Context
 
     /**
      * Execute a command
-     *
-     * @Given (I )execute :command
      */
+    #[Given('(I )execute :command')]
     public function iExecute($cmd)
     {
         $start = microtime(true);
@@ -39,9 +41,8 @@ class SystemContext implements Context
 
     /**
      * Execute a command from project root
-     *
-     * @Given (I )execute :command from project root
      */
+    #[Given('(I )execute :command from project root')]
     public function iExecuteFromProjectRoot($cmd)
     {
         $cmd = $this->root . DIRECTORY_SEPARATOR . $cmd;
@@ -50,9 +51,8 @@ class SystemContext implements Context
 
     /**
      * Display the last command output
-     *
-     * @Then (I )display the last command output
      */
+    #[Then('(I )display the last command output')]
     public function iDumpCommandOutput()
     {
         echo implode(PHP_EOL, $this->output);
@@ -60,9 +60,8 @@ class SystemContext implements Context
 
     /**
      * Command should succeed
-     *
-     * @Then command should succeed
      */
+    #[Then('command should succeed')]
     public function commandShouldSucceed() {
         if ($this->lastReturnCode !== 0) {
             throw new \Exception(sprintf("Command should succeed %b", $this->lastReturnCode));
@@ -71,9 +70,8 @@ class SystemContext implements Context
 
     /**
      * Command should fail
-     *
-     * @Then command should fail
      */
+    #[Then('command should fail')]
     public function commandShouldFail() {
         if ($this->lastReturnCode === 0) {
             throw new \Exception(sprintf("Command should fail %b", $this->lastReturnCode));
@@ -82,9 +80,8 @@ class SystemContext implements Context
 
     /**
      * Command should last less than
-     *
-     * @Then command should last less than :seconds seconds
      */
+    #[Then('command should last less than :seconds seconds')]
     public function commandShouldLastLessThan($seconds)
     {
         if ($this->lastExecutionTime > $seconds) {
@@ -94,9 +91,8 @@ class SystemContext implements Context
 
     /**
      * Command should last more than
-     *
-     * @Then command should last more than :seconds seconds
      */
+    #[Then('command should last more than :seconds seconds')]
     public function commandShouldMoreLessThan($seconds)
     {
         if ($this->lastExecutionTime < $seconds) {
@@ -106,9 +102,8 @@ class SystemContext implements Context
 
     /**
      * Checks, that output contains specified text.
-     *
-     * @Then output should contain :text
      */
+    #[Then('output should contain :text')]
     public function outputShouldContain($text)
     {
         $regex = '~'.$text.'~ui';
@@ -128,9 +123,8 @@ class SystemContext implements Context
 
     /**
      * Checks, that output not contains specified text.
-     *
-     * @Then output should not contain :text
      */
+    #[Then('output should not contain :text')]
     public function outputShouldNotContain($text)
     {
         $regex = '~'.$text.'~ui';
@@ -142,9 +136,7 @@ class SystemContext implements Context
         }
     }
 
-    /**
-     * @Given output should be:
-     */
+    #[Given('output should be:')]
     public function outputShouldBe(PyStringNode $string)
     {
         $expected = $string->getStrings();
@@ -155,9 +147,7 @@ class SystemContext implements Context
         }
     }
 
-    /**
-     * @Given output should not be:
-     */
+    #[Given('output should not be:')]
     public function outputShouldNotBe(PyStringNode $string)
     {
         $expected = $string->getStrings();
@@ -175,10 +165,8 @@ class SystemContext implements Context
         }
     }
 
-    /**
-     * @Given (I )create the file :filename containing:
-     * @Given (I )create the file :filename contening:
-     */
+    #[Given('(I )create the file :filename containing:')]
+    #[Given('(I )create the file :filename contening:')]
     public function iCreateTheFileContaining($filename, PyStringNode $string)
     {
         if (!is_file($filename)) {
@@ -190,9 +178,7 @@ class SystemContext implements Context
         }
     }
 
-    /**
-     * @Then print the content of :filename file
-     */
+    #[Then('print the content of :filename file')]
     public function printTheContentOfFile($filename)
     {
         if (is_file($filename)) {
@@ -203,9 +189,7 @@ class SystemContext implements Context
         }
     }
 
-    /**
-     * @AfterScenario
-     */
+    #[AfterScenario]
     public function after()
     {
         foreach ($this->createdFiles as $filename) {
