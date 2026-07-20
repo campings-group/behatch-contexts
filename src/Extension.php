@@ -13,23 +13,20 @@ use Behat\Testwork\ServiceContainer\Extension as ExtensionInterface;
 
 class Extension implements ExtensionInterface
 {
-    public function getConfigKey()
+    public function getConfigKey(): string
     {
         return 'behatch';
     }
 
-    public function initialize(ExtensionManager $extensionManager)
-    {
-        if (PHP_MAJOR_VERSION === 5) {
-            @trigger_error('The behatch context extension will drop support for PHP 5 in version 4.0', E_USER_DEPRECATED);
-        }
-    }
-
-    public function process(ContainerBuilder $container)
+    public function initialize(ExtensionManager $extensionManager): void
     {
     }
 
-    public function load(ContainerBuilder $container, array $config)
+    public function process(ContainerBuilder $container): void
+    {
+    }
+
+    public function load(ContainerBuilder $container, array $config): void
     {
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/Resources/services'));
         $loader->load('http_call.yml');
@@ -38,7 +35,7 @@ class Extension implements ExtensionInterface
         $this->loadHttpCallListener($container);
     }
 
-    public function configure(ArrayNodeDefinition $builder)
+    public function configure(ArrayNodeDefinition $builder): void
     {
     }
 

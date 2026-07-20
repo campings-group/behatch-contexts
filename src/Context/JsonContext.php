@@ -11,6 +11,7 @@ use Behatch\Json\Json;
 use Behatch\Json\JsonSchema;
 use Behatch\Json\JsonInspector;
 use Behatch\HttpCall\HttpCallResultPool;
+use Behat\Step\Then;
 
 class JsonContext extends BaseContext
 {
@@ -26,9 +27,8 @@ class JsonContext extends BaseContext
 
     /**
      * Checks, that the response is correct JSON
-     *
-     * @Then the response should be in JSON
      */
+    #[Then('the response should be in JSON')]
     public function theResponseShouldBeInJson()
     {
         $this->getJson();
@@ -36,9 +36,8 @@ class JsonContext extends BaseContext
 
     /**
      * Checks, that the response is not correct JSON
-     *
-     * @Then the response should not be in JSON
      */
+    #[Then('the response should not be in JSON')]
     public function theResponseShouldNotBeInJson()
     {
         $this->not(
@@ -49,9 +48,8 @@ class JsonContext extends BaseContext
 
     /**
      * Checks, that given JSON node is equal to given value
-     *
-     * @Then the JSON node :node should be equal to :text
      */
+    #[Then('the JSON node :node should be equal to :text')]
     public function theJsonNodeShouldBeEqualTo($node, $text)
     {
         $json = $this->getJson();
@@ -67,9 +65,8 @@ class JsonContext extends BaseContext
 
     /**
      * Checks, that given JSON nodes are equal to givens values
-     *
-     * @Then the JSON nodes should be equal to:
      */
+    #[Then('the JSON nodes should be equal to:')]
     public function theJsonNodesShouldBeEqualTo(TableNode $nodes)
     {
         foreach ($nodes->getRowsHash() as $node => $text) {
@@ -79,9 +76,8 @@ class JsonContext extends BaseContext
 
     /**
      * Checks, that given JSON node matches given pattern
-     *
-     * @Then the JSON node :node should match :pattern
      */
+    #[Then('the JSON node :node should match :pattern')]
     public function theJsonNodeShouldMatch($node, $pattern)
     {
         $json = $this->getJson();
@@ -97,9 +93,8 @@ class JsonContext extends BaseContext
 
     /**
      * Checks, that given JSON node is null
-     *
-     * @Then the JSON node :node should be null
      */
+    #[Then('the JSON node :node should be null')]
     public function theJsonNodeShouldBeNull($node)
     {
         $json = $this->getJson();
@@ -115,9 +110,8 @@ class JsonContext extends BaseContext
 
     /**
      * Checks, that given JSON node is not null.
-     *
-     * @Then the JSON node :node should not be null
      */
+    #[Then('the JSON node :node should not be null')]
     public function theJsonNodeShouldNotBeNull($node)
     {
         $this->not(function () use ($node) {
@@ -127,9 +121,8 @@ class JsonContext extends BaseContext
 
     /**
      * Checks, that given JSON node is true
-     *
-     * @Then the JSON node :node should be true
      */
+    #[Then('the JSON node :node should be true')]
     public function theJsonNodeShouldBeTrue($node)
     {
         $json = $this->getJson();
@@ -145,9 +138,8 @@ class JsonContext extends BaseContext
 
     /**
      * Checks, that given JSON node is false
-     *
-     * @Then the JSON node :node should be false
      */
+    #[Then('the JSON node :node should be false')]
     public function theJsonNodeShouldBeFalse($node)
     {
         $json = $this->getJson();
@@ -163,9 +155,8 @@ class JsonContext extends BaseContext
 
     /**
      * Checks, that given JSON node is equal to the given string
-     *
-     * @Then the JSON node :node should be equal to the string :text
      */
+    #[Then('the JSON node :node should be equal to the string :text')]
     public function theJsonNodeShouldBeEqualToTheString($node, $text)
     {
         $json = $this->getJson();
@@ -181,9 +172,8 @@ class JsonContext extends BaseContext
 
     /**
      * Checks, that given JSON node is equal to the given number
-     *
-     * @Then the JSON node :node should be equal to the number :number
      */
+    #[Then('the JSON node :node should be equal to the number :number')]
     public function theJsonNodeShouldBeEqualToTheNumber($node, $number)
     {
         $json = $this->getJson();
@@ -199,23 +189,21 @@ class JsonContext extends BaseContext
 
     /**
      * Checks, that given JSON node has N element(s)
-     *
-     * @Then the JSON node :node should have :count element(s)
      */
+    #[Then('the JSON node :node should have :count element(s)')]
     public function theJsonNodeShouldHaveElements($node, $count)
     {
         $json = $this->getJson();
 
         $actual = $this->inspector->evaluate($json, $node);
 
-        $this->assertSame($count, sizeof((array) $actual));
+        $this->assertCount((int)$count, (array)$actual);
     }
 
     /**
      * Checks, that given JSON node contains given value
-     *
-     * @Then the JSON node :node should contain :text
      */
+    #[Then('the JSON node :node should contain :text')]
     public function theJsonNodeShouldContain($node, $text)
     {
         $json = $this->getJson();
@@ -227,9 +215,8 @@ class JsonContext extends BaseContext
 
     /**
      * Checks, that given JSON nodes contains values
-     *
-     * @Then the JSON nodes should contain:
      */
+    #[Then('the JSON nodes should contain:')]
     public function theJsonNodesShouldContain(TableNode $nodes)
     {
         foreach ($nodes->getRowsHash() as $node => $text) {
@@ -239,9 +226,8 @@ class JsonContext extends BaseContext
 
     /**
      * Checks, that given JSON node does not contain given value
-     *
-     * @Then the JSON node :node should not contain :text
      */
+    #[Then('the JSON node :node should not contain :text')]
     public function theJsonNodeShouldNotContain($node, $text)
     {
         $json = $this->getJson();
@@ -253,9 +239,8 @@ class JsonContext extends BaseContext
 
     /**
      * Checks, that given JSON nodes does not contain given value
-     *
-     * @Then the JSON nodes should not contain:
      */
+    #[Then('the JSON nodes should not contain:')]
     public function theJsonNodesShouldNotContain(TableNode $nodes)
     {
         foreach ($nodes->getRowsHash() as $node => $text) {
@@ -265,9 +250,8 @@ class JsonContext extends BaseContext
 
     /**
      * Checks, that given JSON node exist
-     *
-     * @Then the JSON node :name should exist
      */
+    #[Then('the JSON node :name should exist')]
     public function theJsonNodeShouldExist($name)
     {
         $json = $this->getJson();
@@ -282,9 +266,8 @@ class JsonContext extends BaseContext
 
     /**
      * Checks, that given JSON node does not exist
-     *
-     * @Then the JSON node :name should not exist
      */
+    #[Then('the JSON node :name should not exist')]
     public function theJsonNodeShouldNotExist($name)
     {
         $this->not(function () use ($name) {
@@ -292,9 +275,7 @@ class JsonContext extends BaseContext
         }, "The node '$name' exists.");
     }
 
-    /**
-     * @Then the JSON should be valid according to this schema:
-     */
+    #[Then('the JSON should be valid according to this schema:')]
     public function theJsonShouldBeValidAccordingToThisSchema(PyStringNode $schema)
     {
         $this->inspector->validate(
@@ -303,9 +284,7 @@ class JsonContext extends BaseContext
         );
     }
 
-    /**
-     * @Then the JSON should be invalid according to this schema:
-     */
+    #[Then('the JSON should be invalid according to this schema:')]
     public function theJsonShouldBeInvalidAccordingToThisSchema(PyStringNode $schema)
     {
         $this->not(function () use ($schema) {
@@ -313,9 +292,7 @@ class JsonContext extends BaseContext
         }, 'Expected to receive invalid json, got valid one');
     }
 
-    /**
-     * @Then the JSON should be valid according to the schema :filename
-     */
+    #[Then('the JSON should be valid according to the schema :filename')]
     public function theJsonShouldBeValidAccordingToTheSchema($filename)
     {
         $this->checkSchemaFile($filename);
@@ -329,9 +306,7 @@ class JsonContext extends BaseContext
         );
     }
 
-    /**
-     * @Then the JSON should be invalid according to the schema :filename
-     */
+    #[Then('the JSON should be invalid according to the schema :filename')]
     public function theJsonShouldBeInvalidAccordingToTheSchema($filename)
     {
         $this->checkSchemaFile($filename);
@@ -341,9 +316,7 @@ class JsonContext extends BaseContext
         }, "The schema was valid");
     }
 
-    /**
-     * @Then the JSON should be equal to:
-     */
+    #[Then('the JSON should be equal to:')]
     public function theJsonShouldBeEqualTo(PyStringNode $content)
     {
         $actual = $this->getJson();
@@ -361,9 +334,7 @@ class JsonContext extends BaseContext
         );
     }
 
-    /**
-     * @Then print last JSON response
-     */
+    #[Then('print last JSON response')]
     public function printLastJsonResponse()
     {
         echo $this->getJson()
@@ -372,9 +343,8 @@ class JsonContext extends BaseContext
 
     /**
      * Checks, that response JSON matches with a swagger dump
-     *
-     * @Then the JSON should be valid according to swagger :dumpPath dump schema :schemaName
      */
+    #[Then('the JSON should be valid according to swagger :dumpPath dump schema :schemaName')]
     public function theJsonShouldBeValidAccordingToTheSwaggerSchema($dumpPath, $schemaName)
     {
         $this->checkSchemaFile($dumpPath);
@@ -393,9 +363,8 @@ class JsonContext extends BaseContext
     }
     /**
      * Checks, that response JSON not matches with a swagger dump
-     *
-     * @Then the JSON should not be valid according to swagger :dumpPath dump schema :schemaName
      */
+    #[Then('the JSON should not be valid according to swagger :dumpPath dump schema :schemaName')]
     public function theJsonShouldNotBeValidAccordingToTheSwaggerSchema($dumpPath, $schemaName)
     {
         $this->not(function () use ($dumpPath, $schemaName) {
@@ -403,9 +372,7 @@ class JsonContext extends BaseContext
         }, 'JSON Schema matches but it should not');
     }
 
-    /**
-     * @Then json response content list has :attribute attribute
-     */
+    #[Then('json response content list has :attribute attribute')]
     public function jsonResponseContentListHasAttribute($attribute)
     {
         $content = $this->getJson()->getContent();
@@ -422,9 +389,8 @@ class JsonContext extends BaseContext
 
     /**
      * Checks that all elements in the json must not have a value in a specific field.
-     *
-     * @Then All items in the JSON node :node must not have the field :field with value equal to :value
      */
+    #[Then('All items in the JSON node :node must not have the field :field with value equal to :value')]
     public function AllItemsInTheJsonNodeMustNotHaveTheFieldWithValueEqualTo($node, $field, $value)
     {
         $json = $this->getJson();
@@ -438,9 +404,8 @@ class JsonContext extends BaseContext
 
     /**
      * Checks that all elements in the json must not have a value in a specific field.
-     *
-     * @Then All items in the JSON node :node must have the field :field with value equal to :value
      */
+    #[Then('All items in the JSON node :node must have the field :field with value equal to :value')]
     public function AllItemsInTheJsonNodeMustHaveTheFieldWithValueEqualTo($node, $field, $value)
     {
         $json = $this->getJson();
@@ -452,9 +417,7 @@ class JsonContext extends BaseContext
         }
     }
 
-    /**
-     * @Then All items in the JSON node :node must have the field :field null
-     */
+    #[Then('All items in the JSON node :node must have the field :field null')]
     public function AllItemsInTheJsonNodeMustHaveTheFieldWithValueEqualToNull($node, $field)
     {
         $json = $this->getJson();
@@ -466,9 +429,7 @@ class JsonContext extends BaseContext
         }
     }
 
-    /**
-     * @Then All items in the JSON node :node must not have the field :field null
-     */
+    #[Then('All items in the JSON node :node must not have the field :field null')]
     public function AllItemsInTheJsonNodeMustNotHaveTheFieldWithValueEqualToNull($node, $field)
     {
         $json = $this->getJson();
@@ -480,9 +441,7 @@ class JsonContext extends BaseContext
         }
     }
 
-    /**
-     * @Then json response content has :attribute attribute equals to :value
-     */
+    #[Then('json response content has :attribute attribute equals to :value')]
     public function jsonResponseContentHasAttributeEqualsTo($attribute, $value)
     {
         $content = $this->getJson()->getContent();

@@ -4,14 +4,15 @@ namespace Behatch\Context;
 
 use Behatch\Xml\Dom;
 use Behat\Gherkin\Node\PyStringNode;
+use Behat\Step\Then;
+use Behat\Hook\BeforeScenario;
 
 class XmlContext extends BaseContext
 {
     /**
      * Checks that the response is correct XML
-     *
-     * @Then the response should be in XML
      */
+    #[Then('the response should be in XML')]
     public function theResponseShouldBeInXml()
     {
         $this->getDom();
@@ -19,9 +20,8 @@ class XmlContext extends BaseContext
 
     /**
      * Checks that the response is not correct XML
-     *
-     * @Then the response should not be in XML
      */
+    #[Then('the response should not be in XML')]
     public function theResponseShouldNotBeInXml()
     {
         $this->not(
@@ -36,9 +36,8 @@ class XmlContext extends BaseContext
      * @param string $element
      * @throws \Exception
      * @return \DomNodeList
-     *
-     * @Then the XML element :element should exist(s)
      */
+    #[Then('the XML element :element should exist(s)')]
     public function theXmlElementShouldExist($element)
     {
         $elements = $this->getDom()
@@ -53,9 +52,8 @@ class XmlContext extends BaseContext
 
     /**
      * Checks that the specified XML element does not exist
-     *
-     * @Then the XML element :element should not exist(s)
      */
+    #[Then('the XML element :element should not exist(s)')]
     public function theXmlElementShouldNotExist($element)
     {
         $this->not(function () use($element) {
@@ -65,9 +63,8 @@ class XmlContext extends BaseContext
 
     /**
      * Checks that the specified XML element is equal to the given value
-     *
-     * @Then the XML element :element should be equal to :text
      */
+    #[Then('the XML element :element should be equal to :text')]
     public function theXmlElementShouldBeEqualTo($element, $text)
     {
         $elements = $this->theXmlElementShouldExist($element);
@@ -81,9 +78,8 @@ class XmlContext extends BaseContext
 
     /**
      * Checks that the specified XML element is not equal to the given value
-     *
-     * @Then the XML element :element should not be equal to :text
      */
+    #[Then('the XML element :element should not be equal to :text')]
     public function theXmlElementShouldNotBeEqualTo($element, $text)
     {
         $this->not(function () use($element, $text) {
@@ -93,9 +89,8 @@ class XmlContext extends BaseContext
 
     /**
      * Checks that the XML attribute on the specified element exists
-     *
-     * @Then the XML attribute :attribute on element :element should exist(s)
      */
+    #[Then('the XML attribute :attribute on element :element should exist(s)')]
     public function theXmlAttributeShouldExist($attribute, $element)
     {
         $elements = $this->theXmlElementShouldExist("{$element}[@{$attribute}]");
@@ -111,9 +106,8 @@ class XmlContext extends BaseContext
 
     /**
      * Checks that the XML attribute on the specified element does not exist
-     *
-     * @Then the XML attribute :attribute on element :element should not exist(s)
      */
+    #[Then('the XML attribute :attribute on element :element should not exist(s)')]
     public function theXmlAttributeShouldNotExist($attribute, $element)
     {
         $this->theXmlElementShouldNotExist("{$element}[@{$attribute}]");
@@ -121,9 +115,8 @@ class XmlContext extends BaseContext
 
     /**
      * Checks that the XML attribute on the specified element is equal to the given value
-     *
-     * @Then the XML attribute :attribute on element :element should be equal to :text
      */
+    #[Then('the XML attribute :attribute on element :element should be equal to :text')]
     public function theXmlAttributeShouldBeEqualTo($attribute, $element, $text)
     {
         $actual = $this->theXmlAttributeShouldExist($attribute, $element);
@@ -135,9 +128,8 @@ class XmlContext extends BaseContext
 
     /**
      * Checks that the XML attribute on the specified element is not equal to the given value
-     *
-     * @Then the XML attribute :attribute on element :element should not be equal to :text
      */
+    #[Then('the XML attribute :attribute on element :element should not be equal to :text')]
     public function theXmlAttributeShouldNotBeEqualTo($attribute, $element, $text)
     {
         $actual = $this->theXmlAttributeShouldExist($attribute, $element);
@@ -149,9 +141,8 @@ class XmlContext extends BaseContext
 
     /**
      * Checks that the given XML element has N child element(s)
-     *
-     * @Then the XML element :element should have :count element(s)
      */
+    #[Then('the XML element :element should have :count element(s)')]
     public function theXmlElementShouldHaveNChildElements($element, $count)
     {
         $elements = $this->theXmlElementShouldExist($element);
@@ -168,9 +159,8 @@ class XmlContext extends BaseContext
 
     /**
      * Checks that the given XML element contains the given value
-     *
-     * @Then the XML element :element should contain :text
      */
+    #[Then('the XML element :element should contain :text')]
     public function theXmlElementShouldContain($element, $text)
     {
         $elements = $this->theXmlElementShouldExist($element);
@@ -180,9 +170,8 @@ class XmlContext extends BaseContext
 
     /**
      * Checks that the given XML element does not contain the given value
-     *
-     * @Then the XML element :element should not contain :text
      */
+    #[Then('the XML element :element should not contain :text')]
     public function theXmlElementShouldNotContain($element, $text)
     {
         $elements = $this->theXmlElementShouldExist($element);
@@ -192,9 +181,8 @@ class XmlContext extends BaseContext
 
     /**
      * Checks that the XML uses the specified namespace
-     *
-     * @Then the XML should use the namespace :namespace
      */
+    #[Then('the XML should use the namespace :namespace')]
     public function theXmlShouldUseTheNamespace($namespace)
     {
         $namespaces = $this->getDom()
@@ -207,9 +195,8 @@ class XmlContext extends BaseContext
 
     /**
      * Checks that the XML does not use the specified namespace
-     *
-     * @Then the XML should not use the namespace :namespace
      */
+    #[Then('the XML should not use the namespace :namespace')]
     public function theXmlShouldNotUseTheNamespace($namespace)
     {
         $namespaces = $this->getDom()
@@ -222,26 +209,21 @@ class XmlContext extends BaseContext
 
     /**
      * Optimistically (ignoring errors) attempt to pretty-print the last XML response
-     *
-     * @Then print last XML response
      */
+    #[Then('print last XML response')]
     public function printLastXmlResponse()
     {
         echo (string)$this->getDom();
     }
 
-    /**
-     * @BeforeScenario
-     */
+    #[BeforeScenario]
     public function beforeScenario()
     {
         libxml_clear_errors();
         libxml_use_internal_errors(true);
     }
 
-    /**
-     * @Then the XML feed should be valid according to its DTD
-     */
+    #[Then('the XML feed should be valid according to its DTD')]
     public function theXmlFeedShouldBeValidAccordingToItsDtd()
     {
         try {
@@ -252,9 +234,7 @@ class XmlContext extends BaseContext
         }
     }
 
-    /**
-     * @Then the XML feed should be valid according to the XSD :filename
-     */
+    #[Then('the XML feed should be valid according to the XSD :filename')]
     public function theXmlFeedShouldBeValidAccordingToTheXsd($filename)
     {
         if (is_file($filename)) {
@@ -267,18 +247,14 @@ class XmlContext extends BaseContext
         }
     }
 
-    /**
-     * @Then the XML feed should be valid according to this XSD:
-     */
+    #[Then('the XML feed should be valid according to this XSD:')]
     public function theXmlFeedShouldBeValidAccordingToThisXsd(PyStringNode $xsd)
     {
         $this->getDom()
             ->validateXsd($xsd->getRaw());
     }
 
-    /**
-     * @Then the XML feed should be valid according to the relax NG schema :filename
-     */
+    #[Then('the XML feed should be valid according to the relax NG schema :filename')]
     public function theXmlFeedShouldBeValidAccordingToTheRelaxNgSchema($filename)
     {
         if (is_file($filename)) {
@@ -291,18 +267,14 @@ class XmlContext extends BaseContext
         }
     }
 
-    /**
-     * @Then the XML feed should be valid according to this relax NG schema:
-     */
+    #[Then('the XML feed should be valid according to this relax NG schema:')]
     public function theXmlFeedShouldBeValidAccordingToThisRelaxNgSchema(PyStringNode $ng)
     {
         $this->getDom()
             ->validateNg($ng->getRaw());
     }
 
-    /**
-     * @Then the atom feed should be valid
-     */
+    #[Then('the atom feed should be valid')]
     public function theAtomFeedShouldBeValid()
     {
         $this->theXmlFeedShouldBeValidAccordingToTheXsd(
@@ -310,9 +282,7 @@ class XmlContext extends BaseContext
         );
     }
 
-    /**
-     * @Then the RSS2 feed should be valid
-     */
+    #[Then('the RSS2 feed should be valid')]
     public function theRss2FeedShouldBeValid()
     {
         $this->theXmlFeedShouldBeValidAccordingToTheXsd(

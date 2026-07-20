@@ -2,11 +2,12 @@
 
 namespace Behatch;
 
+use Behat\Mink\Session;
 use Behat\MinkExtension\Context\RawMinkContext;
 
 trait Html
 {
-    abstract protected function getSession($name = null);
+    abstract protected function getSession(?string $name = null): Session;
 
     protected function countElements($element, $index, $parent)
     {

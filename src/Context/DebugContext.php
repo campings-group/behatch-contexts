@@ -5,6 +5,9 @@ namespace Behatch\Context;
 use Behat\Gherkin\Node\StepNode;
 use Behat\Behat\Hook\Scope\AfterStepScope;
 use Behat\Mink\Exception\UnsupportedDriverActionException;
+use Behat\Step\Then;
+use Behat\Step\When;
+use Behat\Hook\AfterStep;
 
 class DebugContext extends BaseContext
 {
@@ -20,9 +23,8 @@ class DebugContext extends BaseContext
 
     /**
      * Pauses the scenario until the user presses a key. Useful when debugging a scenario.
-     *
-     * @Then (I )put a breakpoint
      */
+    #[Then('(I )put a breakpoint')]
     public function iPutABreakpoint()
     {
         fwrite(STDOUT, "\033[s    \033[93m[Breakpoint] Press \033[1;93m[RETURN]\033[0;93m to continue...\033[0m");
@@ -35,18 +37,15 @@ class DebugContext extends BaseContext
 
     /**
      * Saving a screenshot
-     *
-     * @When I save a screenshot in :filename
      */
+    #[When('I save a screenshot in :filename')]
     public function iSaveAScreenshotIn($filename)
     {
         sleep(1);
         $this->saveScreenshot($filename, $this->screenshotDir);
     }
 
-    /**
-     * @AfterStep
-     */
+    #[AfterStep]
     public function failScreenshots(AfterStepScope $scope)
     {
         if ($scope->getTestResult()->isPassed()) {
